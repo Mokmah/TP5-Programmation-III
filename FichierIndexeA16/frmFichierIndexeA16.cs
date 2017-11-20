@@ -137,7 +137,7 @@ namespace FichierIndexeA16
             Employe.Salaire = SalEmploye;
             if (!IsListed(NomEmploye))
             {
-                //Faire une méthode pour enregistrer 
+                Save_(Employe);
             }           
         }
 
