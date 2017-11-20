@@ -1,0 +1,9 @@
+Z:\FichierIndexeA16\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe.config
+Z:\FichierIndexeA16\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe
+Z:\FichierIndexeA16\FichierIndexeA16\bin\Debug\FichierIndexeA16.pdb
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.csprojResolveAssemblyReference.cache
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.Properties.Resources.resources
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.csproj.GenerateResource.Cache
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.exe
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.pdb
+Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.frmFichierIndexeA16.resources
