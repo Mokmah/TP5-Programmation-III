@@ -143,7 +143,7 @@
             this.Controls.Add(this.txtNom);
             this.Controls.Add(this.txtNumero);
             this.Name = "frmFichierIndexeA16";
-            this.Text = "Fichier indexé par ?????????";
+            this.Text = "Fichier indexé par William  Garneau";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.frmFichierIndexe_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);

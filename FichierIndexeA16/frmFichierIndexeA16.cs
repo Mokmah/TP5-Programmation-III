@@ -11,7 +11,7 @@ using System.IO;
 //*************************************************************************************************************
 //
 //
-//                              METTRE VOTRE NOM, LA DATE ET UNE BRÈVE DESCRIPTION
+//                              William Garneau, 2017-11-20, Fichiers binaires
 //
 //
 //*************************************************************************************************************
@@ -24,7 +24,7 @@ namespace FichierIndexeA16
         FileStream m_FSE;
         BinaryReader m_BRE;
         BinaryWriter m_BWE;
-
+        SEmploye[] m_Employe;
 
         public frmFichierIndexeA16()
         {
@@ -60,6 +60,20 @@ namespace FichierIndexeA16
             m_FSE = new FileStream(Directory.GetCurrentDirectory() + @"\Employes.don", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
+            if (m_FSE.Length != 0)
+            {
+                m_Employe = new SEmploye[m_NbreEnrg + 50];
+                for (int i = 0; i < m_NbreEnrg; i++)
+                {
+                    m_Employe[i].NoEmp = m_BRE.ReadInt32();
+                    m_Employe[i].Nom = m_BRE.ReadString();
+                    m_Employe[i].Salaire = m_BRE.ReadDouble();
+                }
+            }
+            else
+            {
+                m_Employe = new SEmploye[50];
+            }
 
         }
 

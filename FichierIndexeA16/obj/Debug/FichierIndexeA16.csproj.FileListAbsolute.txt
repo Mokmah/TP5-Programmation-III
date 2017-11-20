@@ -7,3 +7,12 @@ Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.csproj.GenerateR
 Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.exe
 Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.pdb
 Z:\FichierIndexeA16\FichierIndexeA16\obj\Debug\FichierIndexeA16.frmFichierIndexeA16.resources
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe.config
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.exe
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.pdb
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\bin\Debug\FichierIndexeA16.pdb
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.csprojResolveAssemblyReference.cache
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.frmFichierIndexeA16.resources
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.Properties.Resources.resources
+D:\School Projects\TP5\TP5-Programmation-III\FichierIndexeA16\obj\Debug\FichierIndexeA16.csproj.GenerateResource.Cache
