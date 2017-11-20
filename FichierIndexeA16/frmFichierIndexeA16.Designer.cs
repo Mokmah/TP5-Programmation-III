@@ -79,6 +79,7 @@
             this.btnRechercher.TabIndex = 4;
             this.btnRechercher.Text = "Rechercher";
             this.btnRechercher.UseVisualStyleBackColor = true;
+            this.btnRechercher.Click += new System.EventHandler(this.btnRechercher_Click);
             // 
             // btnModifier
             // 
@@ -97,6 +98,7 @@
             this.btnAjouter.TabIndex = 6;
             this.btnAjouter.Text = "Ajouter";
             this.btnAjouter.UseVisualStyleBackColor = true;
+            this.btnAjouter.Click += new System.EventHandler(this.btnAjouter_Click);
             // 
             // btnSupprimer
             // 

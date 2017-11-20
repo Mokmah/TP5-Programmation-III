@@ -30,7 +30,7 @@ namespace FichierIndexeA16
         {
             InitializeComponent();
         }
-
+        #region Events
         private void Form1_Load(object sender, EventArgs e)
         {
 
@@ -60,8 +60,10 @@ namespace FichierIndexeA16
             m_FSE = new FileStream(Directory.GetCurrentDirectory() + @"\Employes.don", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
+
+            //Mettre les données qui sont dans le fichier dans la struct SEmploye
             if (m_FSE.Length != 0)
-            {
+            {//Lire le dernier employe dans le fichier
                 m_Employe = new SEmploye[m_NbreEnrg + 50];
                 for (int i = 0; i < m_NbreEnrg; i++)
                 {
@@ -74,7 +76,6 @@ namespace FichierIndexeA16
             {
                 m_Employe = new SEmploye[50];
             }
-
         }
 
         private void frmFichierIndexe_FormClosed(object sender, FormClosedEventArgs e)
@@ -96,8 +97,66 @@ namespace FichierIndexeA16
 
             FichierIndex.Close();
             bw.Close();
+        }
 
+        private void btnAjouter_Click(object sender, EventArgs e)
+        {
+            int NoEmploye;
+            string NomEmploye;
+            double SalEmploye;
+            bool ConversionNo, ConversionSal;
 
+            //Conversion des textbox dans les variables
+            NomEmploye = txtNom.Text;
+            ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
+            ConversionSal = Double.TryParse(txtSalaire.Text, out SalEmploye);
+
+            /// Validate
+            if (!ConversionNo)
+            {
+                MessageBox.Show("L'employé que vous essayez actuellement de retrouver n'existe pas.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (!ConversionSal)
+            {
+                MessageBox.Show("Le salaire de l'employé que vous essayez de trouver est invalide.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            if (NomEmploye == "")
+            {
+                MessageBox.Show("Le nom de l'employé que vous essayez de trouver est invalide.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+
+            SEmploye Employe = new SEmploye();
+            Employe.NoEmp = NoEmploye;
+            Employe.Nom = NomEmploye;
+            Employe.Salaire = SalEmploye;
+            if (!IsListed(NomEmploye))
+            {
+                //Faire une méthode pour enregistrer 
+            }           
+        }
+
+        private void btnRechercher_Click(object sender, EventArgs e)
+        {
+            int NoEmploye;
+            bool ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
+            if (!ConversionNo)//Savoir si on a pu trouver le dossier associé au numéro.
+            {
+                MessageBox.Show("L'employé que vous essayez actuellement de retrouver n'existe pas.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            bool IsItFound;
+            SEmploye Employe = IsFound(NoEmploye, out IsItFound);
+            if (IsItFound)
+            {//Affichage des données dans les textbox
+                Affichage(Employe);
+            }
         }
         //******************************************************************
         //
@@ -115,5 +174,64 @@ namespace FichierIndexeA16
             }
             MessageBox.Show(s);
         }
+        #endregion
+
+        #region Methodes
+
+        private void Save_(SEmploye Employe)
+        {
+            SIndex Index = new SIndex();
+            Index.ADetruire = false;
+            Index.Cle = Employe.NoEmp;
+            Index.Position = m_NbreEnrg;//Bug
+            m_Employe[m_NbreEnrg] = Employe;
+            m_Index[m_NbreEnrg] = Index;
+            m_NbreEnrg++;
+        }
+
+        private bool IsListed(string NomEmploye)
+        {
+            try
+            {
+                SEmploye Employe = m_Employe.First(f => f.Nom == NomEmploye);
+                SIndex Index = m_Index.First(f => f.Cle == Employe.NoEmp);
+            }
+            catch (InvalidOperationException Nope)
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private SEmploye IsFound(int NoEmploye, out bool IsFound)
+        {
+            SEmploye Employe = new SEmploye();
+            SIndex Index;
+            IsFound = false;
+            try
+            {
+                Index = m_Index.First(f => f.Cle == NoEmploye);
+            }
+            catch(InvalidOperationException Nope)
+            {
+                return Employe;
+            }
+            if (!Index.ADetruire)
+            {
+                Employe = m_Employe.First(f => f.NoEmp == Index.Cle);
+                IsFound = true;
+            }
+            return Employe;
+        }
+
+        private void Affichage(SEmploye Employe)
+        {
+            txtNumero.Text = Employe.NoEmp.ToString();
+            txtNom.Text = Employe.Nom;
+            txtSalaire.Text = Employe.Salaire.ToString();
+        }
+
+        #endregion
+
     }
 }
