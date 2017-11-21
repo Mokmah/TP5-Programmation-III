@@ -114,19 +114,19 @@ namespace FichierIndexeA16
             /// Validate
             if (!ConversionNo)
             {
-                MessageBox.Show("L'employé que vous essayez actuellement de retrouver n'existe pas.", "Erreur",
+                MessageBox.Show("Vous devez entrer un numéro d'employé valide pour l'indexer.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (!ConversionSal)
             {
-                MessageBox.Show("Le salaire de l'employé que vous essayez de trouver est invalide.", "Erreur",
+                MessageBox.Show("Le salaire de l'employé que vous essayez d'enregistrer est invalide.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             if (NomEmploye == "")
             {
-                MessageBox.Show("Le nom de l'employé que vous essayez de trouver est invalide.", "Erreur",
+                MessageBox.Show("Le nom de l'employé que vous essayez d'enregistrer est invalide.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
@@ -147,15 +147,22 @@ namespace FichierIndexeA16
             bool ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
             if (!ConversionNo)//Savoir si on a pu trouver le dossier associé au numéro.
             {
-                MessageBox.Show("L'employé que vous essayez actuellement de retrouver n'existe pas.", "Erreur",
+                MessageBox.Show("Vous devez entrer un numéro d'employé valide pour le rechercher.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
             bool IsItFound;
             SEmploye Employe = IsFound(NoEmploye, out IsItFound);
             if (IsItFound)
-            {//Affichage des données dans les textbox
+            {
+                //Affichage des données dans les textbox
                 Affichage(Employe);
+            }
+            else
+            {
+                MessageBox.Show("L'employé que vous essayez de trouver n'existe pas.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
         }
         //******************************************************************
