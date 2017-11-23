@@ -86,7 +86,7 @@ namespace FichierIndexeA16
             string signature = "Index Employés";
             for (int i = 0; i < m_NbreEnrg; i++)
             {
-                if (m_Index[i].ADetruire == true)
+                if (m_Index[i].ADetruire == true)//Détruire en cas de besoin
                 {
                     var IndexList = m_Index.ToList();
                     IndexList.Remove((m_Index[i]));
@@ -197,7 +197,6 @@ namespace FichierIndexeA16
         private void btnSupprimer_Click(object sender, EventArgs e)
         {
             int NoEmploye;
-            SIndex Ind = new SIndex();
             bool ConversionNo;
 
             m_BWE = new BinaryWriter(m_FSE);
@@ -224,7 +223,7 @@ namespace FichierIndexeA16
                 }
             }
 
-            //Association a la structure
+            //Déterminer que la structure à cet indice est à détruire.
             m_Index[i].ADetruire = true;
 
         }
