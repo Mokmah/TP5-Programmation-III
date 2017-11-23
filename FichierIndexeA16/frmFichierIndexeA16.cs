@@ -162,6 +162,7 @@ namespace FichierIndexeA16
             //Add it to array
             m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
+            Save_();
         }
 
         private void btnRechercher_Click(object sender, EventArgs e)
@@ -197,8 +198,6 @@ namespace FichierIndexeA16
             int NoEmploye;
             bool ConversionNo;
 
-            m_BWE = new BinaryWriter(m_FSE);
-
             //Conversion des textbox dans les variables
             ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
 
@@ -228,7 +227,51 @@ namespace FichierIndexeA16
 
         private void btnModifier_Click(object sender, EventArgs e)
         {
+            int NoEmploye, i = 0;
+            double SalEmploye;
+            bool Conversion;
 
+            //Conversion UI en variables
+            Conversion = Int32.TryParse(txtNumero.Text, out NoEmploye);
+            Conversion = Double.TryParse(txtSalaire.Text, out SalEmploye);
+
+            /// Validate
+            if (!Conversion)
+            {
+                MessageBox.Show("Vous devez entrer des informations valides pour faire des modifications", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            while (NoEmploye != m_Index[i].Cle)
+            {
+                i++;
+                if (i == m_NbreEnrg)
+                {
+                    MessageBox.Show("L'employé que vous essayez d'effacer n'existe pas.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+            m_Index[i].ADetruire = true;
+            Save_();
+            SEmploye Employe = new SEmploye();
+            Employe.NoEmp = NoEmploye;
+            Employe.Nom = txtNom.Text;
+            Employe.Salaire = SalEmploye;
+
+            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
+            Employe.Ecrire(m_FSE, m_BWE);
+
+            //Associate Index
+            SIndex Ind = new SIndex();
+            Ind.Cle = NoEmploye;
+            Ind.Position = Pointer;
+            Ind.ADetruire = false;
+
+            //Add it to array
+            m_Index[m_NbreEnrg] = Ind;
+            m_NbreEnrg++;
+            //Save_();
         }
 
         private void btnCompresser_Click(object sender, EventArgs e)
@@ -316,7 +359,7 @@ namespace FichierIndexeA16
                 m_Index = new SIndex[50];
             br.Close();
             Read.Close();
-            //Vérifier si l'objet a bien été supprimé
+            //Vérifier si l'objet a bien été supprimé (Facultatif)
             m_FSE.Seek(0, SeekOrigin.Begin);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
