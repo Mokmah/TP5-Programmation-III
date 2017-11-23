@@ -184,6 +184,46 @@ namespace FichierIndexeA16
             }
         }
 
+        private void btnSupprimer_Click(object sender, EventArgs e)
+        {
+            int NoEmploye;
+            string NomEmploye;
+            double SalEmploye;
+            SIndex Ind = new SIndex();
+            bool ConversionNo, ConversionSal;
+
+            m_BWE = new BinaryWriter(m_FSE);
+
+            //Conversion des textbox dans les variables
+            ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
+
+            /// Validate
+            if (!ConversionNo)
+            {
+                MessageBox.Show("Vous devez entrer un numéro d'employé valide pour l'indexer.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
+            //Association a la structure
+            SEmploye Employe = new SEmploye();
+            //Employe.NoEmp = NoEmploye;
+            //Employe.Nom = NomEmploye;
+            //Employe.Salaire = SalEmploye;
+
+            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
+            Employe.Ecrire(m_FSE, m_BWE);
+            long i = m_FSE.Length;
+
+            //Associate Index
+            Ind.Cle = NoEmploye;
+            Ind.Position = Pointer;
+            Ind.ADetruire = false;
+
+            //Add it to array
+            m_Index[m_NbreEnrg] = Ind;
+            m_NbreEnrg++;
+        }
+
         //******************************************************************
         //
         //  Ce bouton est là pour se déboguer

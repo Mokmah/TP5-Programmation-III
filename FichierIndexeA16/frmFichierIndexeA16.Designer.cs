@@ -108,6 +108,7 @@
             this.btnSupprimer.TabIndex = 7;
             this.btnSupprimer.Text = "Supprimer";
             this.btnSupprimer.UseVisualStyleBackColor = true;
+            this.btnSupprimer.Click += new System.EventHandler(this.btnSupprimer_Click);
             // 
             // btnCompresser
             // 
