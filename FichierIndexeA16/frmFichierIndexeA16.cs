@@ -233,6 +233,81 @@ namespace FichierIndexeA16
 
         }
 
+        private void btnCompresser_Click(object sender, EventArgs e)
+        {
+            FileStream FichierIndex = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.Truncate, FileAccess.Write, FileShare.None);
+            BinaryWriter bw = new BinaryWriter(FichierIndex);
+            string signature = "Index Employés";
+            for (int i = 0; i < m_NbreEnrg; i++)
+            {
+                if (m_Index[i].ADetruire == true)//Détruire en cas de besoin
+                {
+                    var IndexList = m_Index.ToList();
+                    IndexList.Remove((m_Index[i]));
+                    m_NbreEnrg--;
+                }
+            }
+
+            FichierIndex.Seek(0, SeekOrigin.Begin);
+            bw.Write(signature);
+            bw.Write(m_NbreEnrg);
+
+            for (int i = 0; i < m_NbreEnrg; i++)
+            {
+                bw.Write(m_Index[i].ADetruire);
+                bw.Write(m_Index[i].Cle);
+                bw.Write(m_Index[i].Position);
+            }
+
+            FichierIndex.Close();
+            bw.Close();
+
+            FileStream Read = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
+            BinaryReader br = new BinaryReader(Read);
+            if (Read.Length != 0)
+            {
+                string Header = br.ReadString();
+                m_NbreEnrg = br.ReadInt32();
+                if (Header != "Index Employés")
+                {
+                    MessageBox.Show("Problème d'index");
+                    this.Close();
+                }
+                m_Index = new SIndex[m_NbreEnrg + 50];
+                for (int i = 0; i < m_NbreEnrg; i++)
+                {
+                    m_Index[i].ADetruire = br.ReadBoolean();
+                    m_Index[i].Cle = br.ReadInt32();
+                    m_Index[i].Position = br.ReadInt64();
+                }
+            }
+            else
+                m_Index = new SIndex[50];
+            br.Close();
+            Read.Close();
+            //m_FSE = new FileStream(Directory.GetCurrentDirectory() + @"\Employes.don", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+            m_FSE.Seek(0, SeekOrigin.Begin);
+            m_BRE = new BinaryReader(m_FSE);
+            m_BWE = new BinaryWriter(m_FSE);
+
+            //Mettre les données qui sont dans le fichier dans la struct SEmploye
+            if (m_FSE.Length != 0)
+            {//Lire le dernier employe dans le fichier
+                m_Employe = new SEmploye[m_NbreEnrg + 50];
+                for (int i = 0; i < m_NbreEnrg; i++)
+                {
+                    m_Employe[i].NoEmp = m_BRE.ReadInt32();
+                    m_Employe[i].Nom = m_BRE.ReadString();
+                    m_Employe[i].Salaire = m_BRE.ReadDouble();
+                }
+            }
+            else
+            {
+                m_Employe = new SEmploye[50];
+            }
+
+        }
+
         //******************************************************************
         //
         //  Ce bouton est là pour se déboguer
@@ -259,6 +334,5 @@ namespace FichierIndexeA16
             txtSalaire.Text = Employe.Salaire.ToString();
         }
         #endregion
-
     }
 }

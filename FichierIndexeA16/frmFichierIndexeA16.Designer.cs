@@ -119,6 +119,7 @@
             this.btnCompresser.TabIndex = 8;
             this.btnCompresser.Text = "Compresser";
             this.btnCompresser.UseVisualStyleBackColor = true;
+            this.btnCompresser.Click += new System.EventHandler(this.btnCompresser_Click);
             // 
             // btnAfficher
             // 
