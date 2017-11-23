@@ -29,6 +29,8 @@ namespace FichierIndexeA16
         public frmFichierIndexeA16()
         {
             InitializeComponent();
+            btnModifier.Enabled = false;
+            btnSupprimer.Enabled = false;
         }
 
         #region Events
@@ -143,6 +145,13 @@ namespace FichierIndexeA16
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            bool Val = Validate(NoEmploye);
+            if (!Val)
+            {
+                MessageBox.Show("Vous ne pouvez pas ajouter cet employé puisqu'il est déjà existant.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
             //Association a la structure
             SEmploye Employe = new SEmploye();
@@ -152,7 +161,6 @@ namespace FichierIndexeA16
 
             long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
-            //long i = m_FSE.Length;
 
             //Associate Index
             Ind.Cle = NoEmploye;
@@ -190,6 +198,8 @@ namespace FichierIndexeA16
                 long Position = m_Index[i].Position;
                 PEmp.Lire(Position, m_FSE, m_BRE);
                 Affichage(PEmp);
+                btnModifier.Enabled = true;
+                btnSupprimer.Enabled = true;
             }
         }
 
@@ -271,7 +281,7 @@ namespace FichierIndexeA16
             //Add it to array
             m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
-            //Save_();
+            Save_();
         }
 
         private void btnCompresser_Click(object sender, EventArgs e)
@@ -360,7 +370,7 @@ namespace FichierIndexeA16
             br.Close();
             Read.Close();
             //Vérifier si l'objet a bien été supprimé (Facultatif)
-            m_FSE.Seek(0, SeekOrigin.Begin);
+            m_FSE.Seek(m_Index[0].Position, SeekOrigin.Begin);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
 
@@ -379,6 +389,11 @@ namespace FichierIndexeA16
             {
                 m_Employe = new SEmploye[50];
             }
+        }
+
+        private bool Validate(int Indice)
+        {
+            return true;
         }
         #endregion
     }
