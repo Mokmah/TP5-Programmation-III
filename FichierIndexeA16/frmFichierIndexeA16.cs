@@ -104,7 +104,10 @@ namespace FichierIndexeA16
             int NoEmploye;
             string NomEmploye;
             double SalEmploye;
+            SIndex Ind = new SIndex();
             bool ConversionNo, ConversionSal;
+
+            m_BWE = new BinaryWriter(m_FSE);
 
             //Conversion des textbox dans les variables
             NomEmploye = txtNom.Text;
@@ -137,14 +140,26 @@ namespace FichierIndexeA16
             Employe.Nom = NomEmploye;
             Employe.Salaire = SalEmploye;
 
-            //Écriture dans le fichier
+            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
+            long i = m_FSE.Length;
+
+            //Associate Index
+            Ind.Cle = NoEmploye;
+            Ind.Position = Pointer;
+            Ind.ADetruire = false;
+
+            //Add it to array
+            m_Index[m_NbreEnrg] = Ind;
+            m_NbreEnrg++;
+
 
         }
 
         private void btnRechercher_Click(object sender, EventArgs e)
         {
             int i = 0, NoEmploye;
+            m_BRE = new BinaryReader(m_FSE);
             SEmploye PEmp = new SEmploye();
             bool ConversionNo = Int32.TryParse(txtNumero.Text, out NoEmploye);
             if (!ConversionNo)//Savoir si on a pu trouver le dossier associé au numéro.
@@ -155,7 +170,7 @@ namespace FichierIndexeA16
             }
             while (i < m_NbreEnrg && m_Index[i].Cle != NoEmploye)
                 i++;
-            if (i == m_NbreEnrg)
+            if (i == m_NbreEnrg && m_Index[i].Cle != NoEmploye)
             {
                 MessageBox.Show("L'employé que vous essayez de trouver n'existe pas.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
