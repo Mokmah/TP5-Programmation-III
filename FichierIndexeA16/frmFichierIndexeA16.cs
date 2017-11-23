@@ -277,6 +277,7 @@ namespace FichierIndexeA16
                     IndexList.Remove((m_Index[i]));
                     m_Index = IndexList.ToArray();
                     m_NbreEnrg--;
+                    i--;//Empêcher de sortir de la boucle après une suppression
                 }
             }
 
@@ -322,7 +323,7 @@ namespace FichierIndexeA16
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
 
-            //Mettre les données qui sont dans le fichier dans la struct SEmploye
+            //Mettre les données qui sont dans le fichier dans la struct SEmploye(Vérification)
             if (m_FSE.Length != 0)
             {//Lire le dernier employe dans le fichier
                 m_Employe = new SEmploye[m_NbreEnrg + 50];
