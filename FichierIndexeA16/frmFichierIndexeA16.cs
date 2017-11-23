@@ -84,6 +84,15 @@ namespace FichierIndexeA16
             FileStream FichierIndex = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.Truncate, FileAccess.Write, FileShare.None);
             BinaryWriter bw = new BinaryWriter(FichierIndex);
             string signature = "Index Employés";
+            for (int i = 0; i < m_NbreEnrg; i++)
+            {
+                if (m_Index[i].ADetruire == true)
+                {
+                    var IndexList = m_Index.ToList();
+                    IndexList.Remove((m_Index[i]));
+                    m_NbreEnrg--;
+                }
+            }
 
             FichierIndex.Seek(0, SeekOrigin.Begin);
             bw.Write(signature);
@@ -188,10 +197,8 @@ namespace FichierIndexeA16
         private void btnSupprimer_Click(object sender, EventArgs e)
         {
             int NoEmploye;
-            string NomEmploye;
-            double SalEmploye;
             SIndex Ind = new SIndex();
-            bool ConversionNo, ConversionSal;
+            bool ConversionNo;
 
             m_BWE = new BinaryWriter(m_FSE);
 
@@ -201,28 +208,30 @@ namespace FichierIndexeA16
             /// Validate
             if (!ConversionNo)
             {
-                MessageBox.Show("Vous devez entrer un numéro d'employé valide pour l'indexer.", "Erreur",
+                MessageBox.Show("Vous devez entrer un numéro d'employé valide pour l'effacer", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
+            int i = 0;
+            while (NoEmploye != m_Index[i].Cle)
+            {
+                i++;
+                if (i == m_NbreEnrg)
+                {
+                    MessageBox.Show("L'employé que vous essayez d'effacer n'existe pas.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
+            }
+
             //Association a la structure
-            SEmploye Employe = new SEmploye();
-            //Employe.NoEmp = NoEmploye;
-            //Employe.Nom = NomEmploye;
-            //Employe.Salaire = SalEmploye;
+            m_Index[i].ADetruire = true;
 
-            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
-            Employe.Ecrire(m_FSE, m_BWE);
-            long i = m_FSE.Length;
+        }
 
-            //Associate Index
-            Ind.Cle = NoEmploye;
-            Ind.Position = Pointer;
-            Ind.ADetruire = false;
+        private void btnModifier_Click(object sender, EventArgs e)
+        {
 
-            //Add it to array
-            m_Index[m_NbreEnrg] = Ind;
-            m_NbreEnrg++;
         }
 
         //******************************************************************
@@ -251,5 +260,6 @@ namespace FichierIndexeA16
             txtSalaire.Text = Employe.Salaire.ToString();
         }
         #endregion
+
     }
 }
