@@ -162,8 +162,6 @@ namespace FichierIndexeA16
             //Add it to array
             m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
-
-
         }
 
         private void btnRechercher_Click(object sender, EventArgs e)
