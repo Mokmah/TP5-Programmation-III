@@ -30,6 +30,7 @@ namespace FichierIndexeA16
         {
             InitializeComponent();
         }
+
         #region Events
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -142,7 +143,7 @@ namespace FichierIndexeA16
 
             long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
-            long i = m_FSE.Length;
+            //long i = m_FSE.Length;
 
             //Associate Index
             Ind.Cle = NoEmploye;

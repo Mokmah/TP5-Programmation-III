@@ -34,3 +34,12 @@ C:\Users\willi\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug
 C:\Users\willi\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.csproj.GenerateResource.Cache
 C:\Users\willi\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.exe
 C:\Users\willi\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.pdb
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe.config
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\bin\Debug\FichierIndexeA16.exe
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\bin\Debug\FichierIndexeA16.pdb
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.csprojResolveAssemblyReference.cache
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.frmFichierIndexeA16.resources
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.Properties.Resources.resources
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.csproj.GenerateResource.Cache
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.exe
+C:\Users\William Garneau\Dropbox\Programmation III\TP5 Fichiers\FichierIndexeA16\obj\Debug\FichierIndexeA16.pdb
