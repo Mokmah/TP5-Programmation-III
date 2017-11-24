@@ -145,7 +145,7 @@ namespace FichierIndexeA16
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            bool Val = Validate(NoEmploye);
+            bool Val = SameKeyValidation(NoEmploye);
             if (!Val)
             {
                 MessageBox.Show("Vous ne pouvez pas ajouter cet employé puisqu'il est déjà existant.", "Erreur",
@@ -191,6 +191,10 @@ namespace FichierIndexeA16
             {
                 MessageBox.Show("L'employé que vous essayez de trouver n'existe pas.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
+                btnModifier.Enabled = false;
+                btnSupprimer.Enabled = false;
+                txtNom.Text = "";
+                txtSalaire.Text = "";
                 return;
             }
             else
@@ -262,6 +266,7 @@ namespace FichierIndexeA16
                     return;
                 }
             }
+            ToSuppressValidation(NoEmploye);
             m_Index[i].ADetruire = true;
             Save_();
             SEmploye Employe = new SEmploye();
@@ -391,8 +396,27 @@ namespace FichierIndexeA16
             }
         }
 
-        private bool Validate(int Indice)
+        private bool SameKeyValidation(int Indice)
         {
+            for (int i = 0; i < m_NbreEnrg; i++)
+            {
+                if (m_Index[i].Cle == Indice)
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private bool ToSuppressValidation(int Indice)
+        {
+            for (int i = 0; i < m_NbreEnrg; i++)
+            {
+                if (m_Index[i].ADetruire == true)
+                {
+                    return false;
+                }
+            }
             return true;
         }
         #endregion
