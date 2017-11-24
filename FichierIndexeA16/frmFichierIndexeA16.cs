@@ -269,7 +269,7 @@ namespace FichierIndexeA16
             }
             ToSuppressValidation(NoEmploye);
             m_Index[i].ADetruire = true;
-            //Save_();
+            Save_();
             SEmploye Employe = new SEmploye();
             Employe.NoEmp = NoEmploye;
             Employe.Nom = txtNom.Text;
@@ -277,7 +277,6 @@ namespace FichierIndexeA16
 
             long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
-            Save_();
             //Associate Index
             SIndex Ind = new SIndex();
             Ind.Cle = NoEmploye;
