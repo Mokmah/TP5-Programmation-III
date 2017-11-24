@@ -236,7 +236,8 @@ namespace FichierIndexeA16
 
             //Déterminer que la structure à cet indice est à détruire.
             m_Index[i].ADetruire = true;
-
+            MessageBox.Show("Vous devrez compresser le fichier pour finaliser la suppression.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void btnModifier_Click(object sender, EventArgs e)
@@ -244,7 +245,7 @@ namespace FichierIndexeA16
             int NoEmploye, i = 0;
             double SalEmploye;
             bool Conversion;
-
+            m_BWE = new BinaryWriter(m_FSE);
             //Conversion UI en variables
             Conversion = Int32.TryParse(txtNumero.Text, out NoEmploye);
             Conversion = Double.TryParse(txtSalaire.Text, out SalEmploye);
@@ -268,7 +269,7 @@ namespace FichierIndexeA16
             }
             ToSuppressValidation(NoEmploye);
             m_Index[i].ADetruire = true;
-            Save_();
+            //Save_();
             SEmploye Employe = new SEmploye();
             Employe.NoEmp = NoEmploye;
             Employe.Nom = txtNom.Text;
@@ -276,13 +277,12 @@ namespace FichierIndexeA16
 
             long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
-
+            Save_();
             //Associate Index
             SIndex Ind = new SIndex();
             Ind.Cle = NoEmploye;
             Ind.Position = Pointer;
             Ind.ADetruire = false;
-
             //Add it to array
             m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
@@ -375,7 +375,7 @@ namespace FichierIndexeA16
             br.Close();
             Read.Close();
             //Vérifier si l'objet a bien été supprimé (Facultatif)
-            m_FSE.Seek(m_Index[0].Position, SeekOrigin.Begin);
+            m_FSE.Seek(0, SeekOrigin.Begin);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
 
