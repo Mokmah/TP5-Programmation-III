@@ -269,19 +269,19 @@ namespace FichierIndexeA16
             }
             ToSuppressValidation(NoEmploye);
             m_Index[i].ADetruire = true;
+            long Pointer = m_Index[i].Position;
+            SIndex Ind = new SIndex();
+            Ind.Cle = NoEmploye;
+            Ind.Position = Pointer;
+            Ind.ADetruire = false;
             Save_();
             SEmploye Employe = new SEmploye();
             Employe.NoEmp = NoEmploye;
             Employe.Nom = txtNom.Text;
             Employe.Salaire = SalEmploye;
-
-            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
+             // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
             //Associate Index
-            SIndex Ind = new SIndex();
-            Ind.Cle = NoEmploye;
-            Ind.Position = Pointer;
-            Ind.ADetruire = false;
             //Add it to array
             m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
@@ -318,11 +318,11 @@ namespace FichierIndexeA16
             txtNom.Text = Employe.Nom;
             txtSalaire.Text = Employe.Salaire.ToString();
         }
-
         private void Save_()
         {
             FileStream FichierIndex = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.Truncate, FileAccess.Write, FileShare.None);
             BinaryWriter bw = new BinaryWriter(FichierIndex);
+
             string signature = "Index Employés";
             for (int i = 0; i < m_NbreEnrg; i++)
             {
@@ -331,8 +331,12 @@ namespace FichierIndexeA16
                     var IndexList = m_Index.ToList();
                     IndexList.Remove((m_Index[i]));
                     m_Index = IndexList.ToArray();
+                    var EmpList = m_Employe.ToList();
+                    EmpList.Remove((m_Employe[i]));
+                    m_Employe = EmpList.ToArray();
                     m_NbreEnrg--;
                     i--;//Empêcher de sortir de la boucle après une suppression
+
                 }
             }
 
@@ -374,7 +378,7 @@ namespace FichierIndexeA16
             br.Close();
             Read.Close();
             //Vérifier si l'objet a bien été supprimé (Facultatif)
-            m_FSE.Seek(0, SeekOrigin.Begin);
+            m_FSE.Seek(m_Index[0].Position, SeekOrigin.Begin);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
 
