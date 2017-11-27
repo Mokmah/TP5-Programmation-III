@@ -284,7 +284,7 @@ namespace FichierIndexeA16
             for (int i = 0; pos < m_FSE.Length; i++)
             {
                 emp.Lire(pos, m_FSE, m_BRE);
-                s += "Numéro d'employé : " + m_Index[i].Cle.ToString() + "\tNom : " + (emp.Nom).ToString() + "\tSalaire : " + (emp.Salaire).ToString() + "\n";
+                s += "Numéro d'employé : " + (emp.Nom).ToString() + "\tNom : " + (emp.Nom).ToString() + "\tSalaire : " + (emp.Salaire).ToString() + "\n";
                 pos = (int)this.m_FSE.Position;
             }
             MessageBox.Show(s);
