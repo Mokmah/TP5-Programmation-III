@@ -24,7 +24,6 @@ namespace FichierIndexeA16
         FileStream m_FSE;
         BinaryReader m_BRE;
         BinaryWriter m_BWE;
-        SEmploye[] m_Employe;
 
         public frmFichierIndexeA16()
         {
@@ -63,22 +62,6 @@ namespace FichierIndexeA16
             m_FSE = new FileStream(Directory.GetCurrentDirectory() + @"\Employes.don", FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
             m_BRE = new BinaryReader(m_FSE);
             m_BWE = new BinaryWriter(m_FSE);
-
-            //Mettre les données qui sont dans le fichier dans la struct SEmploye
-            if (m_FSE.Length != 0)
-            {//Lire le dernier employe dans le fichier
-                m_Employe = new SEmploye[m_NbreEnrg + 50];
-                for (int i = 0; i < m_NbreEnrg; i++)
-                {
-                    m_Employe[i].NoEmp = m_BRE.ReadInt32();
-                    m_Employe[i].Nom = m_BRE.ReadString();
-                    m_Employe[i].Salaire = m_BRE.ReadDouble();
-                }
-            }
-            else
-            {
-                m_Employe = new SEmploye[50];
-            }
         }
 
         private void frmFichierIndexe_FormClosed(object sender, FormClosedEventArgs e)
@@ -86,16 +69,6 @@ namespace FichierIndexeA16
             FileStream FichierIndex = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.Truncate, FileAccess.Write, FileShare.None);
             BinaryWriter bw = new BinaryWriter(FichierIndex);
             string signature = "Index Employés";
-            for (int i = 0; i < m_NbreEnrg; i++)
-            {
-                if (m_Index[i].ADetruire == true)//Détruire en cas de besoin
-                {
-                    var IndexList = m_Index.ToList();
-                    IndexList.Remove((m_Index[i]));
-                    m_NbreEnrg--;
-                }
-            }
-
             FichierIndex.Seek(0, SeekOrigin.Begin);
             bw.Write(signature);
             bw.Write(m_NbreEnrg);
@@ -145,8 +118,10 @@ namespace FichierIndexeA16
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            bool Val = SameKeyValidation(NoEmploye);
-            if (!Val)
+            int i;
+            long pos = GetEmploye(NoEmploye, out i);
+            bool flag = pos != -1;
+            if (i == -1)
             {
                 MessageBox.Show("Vous ne pouvez pas ajouter cet employé puisqu'il est déjà existant.", "Erreur",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -159,18 +134,19 @@ namespace FichierIndexeA16
             Employe.Nom = NomEmploye;
             Employe.Salaire = SalEmploye;
 
-            long Pointer = m_FSE.Length; // Savoir la position initiale de la struct
+            m_FSE.Seek(0, SeekOrigin.End);
+            long Pointer = m_FSE.Position; // Savoir la position initiale de la struct
             Employe.Ecrire(m_FSE, m_BWE);
 
             //Associate Index
-            Ind.Cle = NoEmploye;
-            Ind.Position = Pointer;
-            Ind.ADetruire = false;
-
-            //Add it to array
-            m_Index[m_NbreEnrg] = Ind;
             m_NbreEnrg++;
-            Save_();
+            m_Index[m_NbreEnrg - 1].Position = Pointer;
+            m_Index[m_NbreEnrg - 1].Cle = NoEmploye;
+            m_Index[m_NbreEnrg - 1].ADetruire = false;
+
+
+            MessageBox.Show("Votre nouvel employé a été enregistré avec succès.", "Félicitations !",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void btnRechercher_Click(object sender, EventArgs e)
@@ -209,7 +185,7 @@ namespace FichierIndexeA16
 
         private void btnSupprimer_Click(object sender, EventArgs e)
         {
-            int NoEmploye;
+            int NoEmploye, Index;
             bool ConversionNo;
 
             //Conversion des textbox dans les variables
@@ -222,30 +198,25 @@ namespace FichierIndexeA16
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-            int i = 0;
-            while (NoEmploye != m_Index[i].Cle)
+            long Position = GetEmploye(NoEmploye, out Index);
+            if (Index == -1)
             {
-                i++;
-                if (i == m_NbreEnrg)
-                {
-                    MessageBox.Show("L'employé que vous essayez d'effacer n'existe pas.", "Erreur",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    return;
-                }
+                MessageBox.Show("L'employé que vous essayez d'effacer n'existe pas.", "Erreur",
+                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
             }
-
             //Déterminer que la structure à cet indice est à détruire.
-            m_Index[i].ADetruire = true;
-            MessageBox.Show("Vous devrez compresser le fichier pour finaliser la suppression.", "Erreur",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+            m_Index[Index].ADetruire = true;
+            MessageBox.Show("Vous devrez compresser le fichier pour finaliser la suppression.", "Avertissement",
+                    MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
         }
 
         private void btnModifier_Click(object sender, EventArgs e)
         {
+            SEmploye emp = default(SEmploye);
             int NoEmploye, i = 0;
             double SalEmploye;
             bool Conversion;
-            m_BWE = new BinaryWriter(m_FSE);
             //Conversion UI en variables
             Conversion = Int32.TryParse(txtNumero.Text, out NoEmploye);
             Conversion = Double.TryParse(txtSalaire.Text, out SalEmploye);
@@ -266,31 +237,35 @@ namespace FichierIndexeA16
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
+                if (NoEmploye == m_Index[i].Cle && m_Index[i].ADetruire == true)
+                {
+                    MessageBox.Show("Cet employé a été supprimé.", "Erreur",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return;
+                }
             }
-            ToSuppressValidation(NoEmploye);
-            m_Index[i].ADetruire = true;
-            long Pointer = m_Index[i].Position;
-            SIndex Ind = new SIndex();
-            Ind.Cle = NoEmploye;
-            Ind.Position = Pointer;
-            Ind.ADetruire = false;
-            Save_();
-            SEmploye Employe = new SEmploye();
-            Employe.NoEmp = NoEmploye;
-            Employe.Nom = txtNom.Text;
-            Employe.Salaire = SalEmploye;
-             // Savoir la position initiale de la struct
-            Employe.Ecrire(m_FSE, m_BWE);
-            //Associate Index
-            //Add it to array
-            m_Index[m_NbreEnrg] = Ind;
-            m_NbreEnrg++;
-            Save_();
+
+            emp.NoEmp = NoEmploye;
+            emp.Nom = txtNom.Text;
+            emp.Salaire = SalEmploye;
+
+            //Écrire le nouvel employé à la fin du fichier
+            m_FSE.Seek(0, SeekOrigin.End);
+            emp.Ecrire(m_FSE, m_BWE);
+
+            //Ajouter au tableau d'indice après
+            m_Index[i].Position = i;
+            m_Index[i].Cle = NoEmploye;
+            m_Index[i].ADetruire = false;
+
+            MessageBox.Show("Vos changements ont été effectués avec succès.", "Félicitations !",
+                    MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+            return;
         }
 
         private void btnCompresser_Click(object sender, EventArgs e)
         {
-            Save_();
+            Save_(sender, e);
         }
 
         //******************************************************************
@@ -302,10 +277,14 @@ namespace FichierIndexeA16
         private void btnAfficher_Click(object sender, EventArgs e)
         {
             string s = "";
-
-            for (int i = 0; i < m_NbreEnrg; i++)
+            SEmploye emp = default(SEmploye);
+            int pos = 0;
+            m_FSE.Seek(0, SeekOrigin.Begin);
+            for (int i = 0; pos < m_FSE.Length; i++)
             {
-                s += "Numéro d'employé : " + m_Index[i].Cle.ToString() + "\tNom : " + (m_Employe[i].Nom).ToString() + "\tSalaire : " + (m_Employe[i].Salaire).ToString() + "\n";
+                emp.Lire(pos, m_FSE, m_BRE);
+                s += "Numéro d'employé : " + m_Index[i].Cle.ToString() + "\tNom : " + (emp.Nom).ToString() + "\tSalaire : " + (emp.Salaire).ToString() + "\n";
+                pos = (int)this.m_FSE.Position;
             }
             MessageBox.Show(s);
         }
@@ -318,85 +297,76 @@ namespace FichierIndexeA16
             txtNom.Text = Employe.Nom;
             txtSalaire.Text = Employe.Salaire.ToString();
         }
-        private void Save_()
+
+        private long GetEmploye(int NoEmploye,out int Index)
         {
+            Index = 0;
+            while (Index < m_NbreEnrg && NoEmploye != m_Index[Index].Cle)
+            {
+                Index++;
+            }
+            bool FinFichier = Index == m_NbreEnrg;
+            long retour;
+            if (FinFichier)
+            {
+                retour = -1;
+            }
+            else
+            {
+                retour = m_Index[Index].Position;
+            }
+            return retour;
+        }
+
+        private void Save_(object sender, EventArgs e)
+        {
+            int NbEmploye = 0;
+            SEmploye emp = default(SEmploye);
+            FileStream Temporaire = new FileStream(Directory.GetCurrentDirectory() + @"\Replacement.tmp",
+                FileMode.Create, FileAccess.Write, FileShare.None);
+            BinaryWriter BWE = new BinaryWriter(Temporaire);
+            for (int i = 0; i < m_NbreEnrg; i++) // Transférer tout le fichier d'index dans le nouveau fichier temporaire
+            {
+                bool Flag = !m_Index[i].ADetruire;
+                if (Flag)
+                {
+                    emp.Lire(m_Index[i].Position, m_FSE, m_BRE);
+                    m_Index[i].Position = Temporaire.Position;
+                    emp.Ecrire(Temporaire, BWE);
+                    NbEmploye++;
+                }
+            }
+            //On ferme tout
+            m_BRE.Close();
+            m_FSE.Close();
+            m_BWE.Close();
+            BWE.Close();
+            Temporaire.Close();
+
+            File.Replace("Replacement.tmp", "Employes.don", "Employe.bak");
+            //On réécrit les bonnes valeurs qui doivent êtres présentes dans le fichier
             FileStream FichierIndex = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.Truncate, FileAccess.Write, FileShare.None);
-            BinaryWriter bw = new BinaryWriter(FichierIndex);
-
-            string signature = "Index Employés";
-            for (int i = 0; i < m_NbreEnrg; i++)
-            {
-                if (m_Index[i].ADetruire == true)//Détruire en cas de besoin
-                {
-                    var IndexList = m_Index.ToList();
-                    IndexList.Remove((m_Index[i]));
-                    m_Index = IndexList.ToArray();
-                    var EmpList = m_Employe.ToList();
-                    EmpList.Remove((m_Employe[i]));
-                    m_Employe = EmpList.ToArray();
-                    m_NbreEnrg--;
-                    i--;//Empêcher de sortir de la boucle après une suppression
-
-                }
-            }
-
+            BinaryWriter bwe = new BinaryWriter(FichierIndex);
+            string Signature = "Index Employés";
             FichierIndex.Seek(0, SeekOrigin.Begin);
-            bw.Write(signature);
-            bw.Write(m_NbreEnrg);
 
-            for (int i = 0; i < m_NbreEnrg; i++)
+            bwe.Write(Signature);
+            bwe.Write(NbEmploye);
+
+            //Réécriture
+            for (int i = 0; i < m_NbreEnrg; i++) // Transférer tout le fichier d'index dans le nouveau fichier temporaire
             {
-                bw.Write(m_Index[i].ADetruire);
-                bw.Write(m_Index[i].Cle);
-                bw.Write(m_Index[i].Position);
+                bool Flag = !m_Index[i].ADetruire;
+                if (Flag)
+                {
+                    bwe.Write(m_Index[i].ADetruire);
+                    bwe.Write(m_Index[i].Cle);
+                    bwe.Write(m_Index[i].Position);
+                }
             }
-
             FichierIndex.Close();
-            bw.Close();
-            //Pour réintégrer les positions dans les index
-            FileStream Read = new FileStream(Directory.GetCurrentDirectory() + @"\Index.ndx", FileMode.OpenOrCreate, FileAccess.Read, FileShare.None);
-            BinaryReader br = new BinaryReader(Read);
-            if (Read.Length != 0)
-            {
-                string Header = br.ReadString();
-                m_NbreEnrg = br.ReadInt32();
-                if (Header != "Index Employés")
-                {
-                    MessageBox.Show("Problème d'index");
-                    this.Close();
-                }
-                m_Index = new SIndex[m_NbreEnrg + 50];
-                for (int i = 0; i < m_NbreEnrg; i++)
-                {
-                    m_Index[i].ADetruire = br.ReadBoolean();
-                    m_Index[i].Cle = br.ReadInt32();
-                    m_Index[i].Position = br.ReadInt64();
-                }
-            }
-            else
-                m_Index = new SIndex[50];
-            br.Close();
-            Read.Close();
-            //Vérifier si l'objet a bien été supprimé (Facultatif)
-            m_FSE.Seek(m_Index[0].Position, SeekOrigin.Begin);
-            m_BRE = new BinaryReader(m_FSE);
-            m_BWE = new BinaryWriter(m_FSE);
-
-            //Mettre les données qui sont dans le fichier dans la struct SEmploye(Vérification)
-            if (m_FSE.Length != 0)
-            {//Lire le dernier employe dans le fichier
-                m_Employe = new SEmploye[m_NbreEnrg + 50];
-                for (int i = 0; i < m_NbreEnrg; i++)
-                {
-                    m_Employe[i].NoEmp = m_BRE.ReadInt32();
-                    m_Employe[i].Nom = m_BRE.ReadString();
-                    m_Employe[i].Salaire = m_BRE.ReadDouble();
-                }
-            }
-            else
-            {
-                m_Employe = new SEmploye[50];
-            }
+            bwe.Close();
+            this.Form1_Load(sender, e);
         }
 
         private bool SameKeyValidation(int Indice)
