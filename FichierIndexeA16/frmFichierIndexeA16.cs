@@ -255,7 +255,7 @@ namespace FichierIndexeA16
             emp.Ecrire(m_FSE, m_BWE);
 
             //Ajouter au tableau d'indice après
-            m_Index[i].Position = position;
+            m_Index[i].Position = position;//Ne pas mettre fin du fichier mais la position du pointeur
             m_Index[i].Cle = NoEmploye;
             m_Index[i].ADetruire = false;
 
