@@ -251,10 +251,11 @@ namespace FichierIndexeA16
 
             //Écrire le nouvel employé à la fin du fichier
             m_FSE.Seek(0, SeekOrigin.End);
+            long position = m_FSE.Position;
             emp.Ecrire(m_FSE, m_BWE);
 
             //Ajouter au tableau d'indice après
-            m_Index[i].Position = i;
+            m_Index[i].Position = position;
             m_Index[i].Cle = NoEmploye;
             m_Index[i].ADetruire = false;
 
